@@ -1,0 +1,29 @@
+{
+  "action": "segment.users.sync",
+  "partner_config": {
+    "fields": [
+      {
+        "field_id": "workspace",
+        "field_display_name": "Workspace",
+        "value": {
+          "id": "workspace_1",
+          "display_name": "Workspace 1"
+        }
+      }
+    ]
+  },
+  "data": {
+    "segment": {
+      "id": 1338065,
+      "name": "Free Customers"
+    },
+    "add": [
+      {
+        "id": "user1@email.com"
+      },
+      {
+        "id": "user2@email.com"
+      }
+    ]
+  }
+}
