@@ -68,11 +68,11 @@ if (argv.type === 'sync') {
     dataBody = (JSON.stringify(drainData));
 }
 
-const hash = CryptoJS.enc.Base64.stringify(
+const hmac = CryptoJS.enc.Base64.stringify(
     CryptoJS.HmacSHA256(
         `${timeStamp}${dataBody}`,
         secretKey
     )
 );
 
-console.log(`curl -v -H 'Content-Type: application/json' -H 'Heap-Hash: ts:${timeStamp},hash:${hash}' -d '${dataBody}' ${argv.url}`);
+console.log(`curl -v -H 'Content-Type: application/json' -H 'Heap-Hash: ts:${timeStamp},hmac:${hmac}' -d '${dataBody}' ${argv.url}`);

@@ -1,5 +1,5 @@
 export const HEAP_TIMESTAMP_KEY = "ts";
-export const HEAP_HASH_KEY = "hash";
+export const HEAP_HMAC_KEY = "hmac";
 
 // How much older can the originating timestamp be before
 // we reject it (in milliseconds). Currently 1 minute
