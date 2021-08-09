@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { DrainRequest } from "./webhooks";
+import { DrainRequest } from "./webhooks_types";
 import { jsonToDrainRequest, getActionFromContext } from "./bodyHelpers"
 import { SEGMENT_USERS_DRAIN } from "../constants"
 
@@ -18,13 +18,21 @@ export const usersDrain = async (ctx: Context, next: () => Promise<any>): Promis
         ctx.throw(400, `Invalid data format: ${e}`)
     }
 
-    // Validate the id_token for the request
-    if (userRequestData.id_token != process.env.ID_TOKEN) {
-        ctx.throw(404, "id_token not found");
-    }
-
-    // Validate the segment
-    // TODO - add validation with a database
+    // Partner Actions:
+    // 1 - Validate the id_token which identifies the customer.  If no id_token is provided
+    //     the account / environment the one in which the partner app is registered. Ex:
+    //         let id_token; // Internal identifier for the customer
+    //         if (!userRequestData.id_token) {
+    //             id_token = SELF_ID_TOKEN
+    //         } else {
+    //             // getInternalIdToken will lookup the id_token passed in and return the
+    //             // internal representation of the customer for the partner
+    //             id_token = getInternalIdToken(userRequestData.id_token)
+    //             if (!id_token) {
+    //                 ctx.throw(400, "Invalid id_token");
+    //             }
+    //         }
+    // 2 - Validate the segment ID.  If it does not exist, no action is required.
 
     console.log(`Draining segment: ${userRequestData.data.segment.id}`);
     ctx.status = 200;
