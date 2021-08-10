@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as webhooks from "./webhooks";
+import * as webhooks from "./webhooks_types";
 import { Context } from "koa";
 
 const getPartnerConfig = (json: any): webhooks.FieldList => {
@@ -45,12 +45,13 @@ const getSegment = (json: any): webhooks.Segment => {
     };
 }
 const getSyncData = (json: any): webhooks.SyncData => {
-    if (!json.segment || !json.add) {
+    if (!json.segment || (!json.add && !json.remove)) {
         throw new TypeError("Sync data is missing required fields");
     }
     return {
         segment: getSegment(json.segment),
-        add: getUserEmails(json.add)
+        add: getUserEmails(json.add || []),
+        remove: getUserEmails(json.remove || [])
     };
 };
 

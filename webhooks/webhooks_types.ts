@@ -25,6 +25,7 @@ export interface UserEmail {
 export interface SyncData {
     "segment": Segment;
     "add": UserEmail[];
+    "remove": UserEmail[];
 }
 
 export interface DrainData {

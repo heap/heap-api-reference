@@ -17,12 +17,20 @@
       "id": 1338065,
       "name": "Free Customers"
     },
-    "add": [
+    "remove": [
       {
         "id": "user1@email.com"
       },
       {
         "id": "user2@email.com"
+      }
+    ],
+    "add": [
+      {
+        "id": "user3@email.com"
+      },
+      {
+        "id": "user4@email.com"
       }
     ]
   }

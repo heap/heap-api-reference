@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { SyncRequest } from "./webhooks";
+import { SyncRequest } from "./webhooks_types";
 import { jsonToSyncRequest, getActionFromContext } from "./bodyHelpers";
 import { SEGMENT_USERS_SYNC } from "../constants";
 
@@ -18,17 +18,30 @@ export const usersSync = async (ctx: Context, next: () => Promise<any>): Promise
         ctx.throw(400, `Invalid data format: ${e}`)
     }
 
-    // Validate the id_token for the request
-    if (userRequestData.id_token != process.env.ID_TOKEN) {
-        ctx.throw(404, "id_token not found");
-    }
-
-    // Validate the segment
-    // TODO - add validation with a database
+    // Partner Actions:
+    // 1 - Validate the id_token which identifies the customer.  If no id_token is provided
+    //     the account / environment the one in which the partner app is registered. Ex:
+    //         let id_token; // Internal identifier for the customer
+    //         if (!userRequestData.id_token) {
+    //             id_token = SELF_ID_TOKEN
+    //         } else {
+    //             // getInternalIdToken will lookup the id_token passed in and return the
+    //             // internal representation of the customer for the partner
+    //             id_token = getInternalIdToken(userRequestData.id_token)
+    //             if (!id_token) {
+    //                 ctx.throw(400, "Invalid id_token");
+    //             }
+    //         }
+    // 2 - Validate the segment ID.  If it does not exist yet, it should be created.
 
     for (const email of userRequestData.data.add) {
         // process the new emails
         console.log(`Adding email ${email.id} for segment ${userRequestData.data.segment.id}`);
+    }
+
+    for (const email of userRequestData.data.remove) {
+        // process the emails that should be removed
+        console.log(`Removing email ${email.id} for segment ${userRequestData.data.segment.id}`);
     }
     ctx.status = 200;
     await next();
