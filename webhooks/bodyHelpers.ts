@@ -55,17 +55,18 @@ const getSyncData = (json: any): webhooks.SyncData => {
     };
 };
 
+const checkRequiredFieldsExist = (json: any): void => {
+    const requiredFields = ["action", "customer_config", "data"]
+    for (const field of requiredFields) {
+        if (!json[field]) {
+            throw new TypeError(`Drain request is missing required field: ${field}`);
+        }
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
-    if (!json.action ) {
-        throw new TypeError("Sync request is missing required field: action");
-    }
-    if (!json.customer_config) {
-        throw new TypeError("Sync request is missing required field: customer_config");
-    }
-    if (!json.data) {
-        throw new TypeError("Sync request is missing required field: data");
-    }
+    checkRequiredFieldsExist(json)
     const syncRequest: webhooks.SyncRequest = {
         id_token: json.id_token,
         action: json.action,
@@ -77,16 +78,7 @@ export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
-    const requiredFields = ["action", "customer_config", "data"]
-    for (field of requiredFields) {
-        if (!json[field]) {
-            throw new TypeError(`Drain request is missing required field: ${field}`);    
-        }
-    }
-    if (!json.action || !json.customer_config || !json.data) {
-        
-    }
-
+    checkRequiredFieldsExist(json)
     const drainRequest: webhooks.DrainRequest = {
         id_token: json.id_token,
         action: json.action,

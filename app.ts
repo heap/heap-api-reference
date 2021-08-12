@@ -18,7 +18,7 @@ app.use(logger());
 app.use(bodyParser());
 app.use(validateHeapHeader);
 app.use(router.routes());
-app.on('error', (err, ctx) => {
+app.on('error', (err) => {
     console.log(err)
 });
 app.listen(3000);
