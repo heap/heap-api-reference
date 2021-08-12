@@ -1,4 +1,5 @@
 import Router = require('koa-router');
+import logger = require('koa-logger')
 import Koa = require('koa');
 import { usersSync } from "./webhooks/usersSync";
 import { usersDrain } from "./webhooks/usersDrain";
@@ -13,8 +14,11 @@ router
     .post('/users_sync', usersSync)
     .post('/users_drain', usersDrain)
 
+app.use(logger());
 app.use(bodyParser());
 app.use(validateHeapHeader);
 app.use(router.routes());
-
+app.on('error', (err, ctx) => {
+    console.log(err)
+});
 app.listen(3000);
