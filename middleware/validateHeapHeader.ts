@@ -32,7 +32,7 @@ const extractTimeStampAndHMAC = (heapHeader: string, ctx: Context): Map<string, 
 }
 
 const isTimeStampWithinThreshold = (ts: number): boolean => {
-    const now = Math.round(Date.now() / 1000);
+    const now = +Date.now();
     if ((now - ts) > MAX_OLD_TIMESTAMP_DELTA) {
         return false;
     }
