@@ -6,7 +6,7 @@ const yargs = require('yargs');
 const CryptoJS = require('crypto-js');
 
 // Use a 5 minute delta for past / future
-const TIMESTAMP_DELTA = 5 * 60 * 1000;
+const TIMESTAMP_DELTA = 5 * 60;
 
 const argv = yargs
     .command(
@@ -44,7 +44,7 @@ const argv = yargs
     .argv;
 
 
-let timeStamp = Date.now();
+let timeStamp = Math.floor(Date.now() / 1000);
 if (argv.time_adjust === 'future'){
     timeStamp += TIMESTAMP_DELTA;
 } else if (argv.time_adjust === 'past') {
