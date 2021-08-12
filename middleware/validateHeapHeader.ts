@@ -32,7 +32,7 @@ const extractTimeStampAndHMAC = (heapHeader: string, ctx: Context): Map<string, 
 }
 
 const isTimeStampWithinThreshold = (ts: number): boolean => {
-    const now = Date.now();
+    const now = Math.round(Date.now() / 1000);
     if ((now - ts) > MAX_OLD_TIMESTAMP_DELTA) {
         return false;
     }
@@ -62,6 +62,8 @@ export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>)
     );
 
     if (CryptoJS.enc.Base64.stringify(hmac) != heapMap.get("hmac")) {
+        console.log("hmac recieved, ", heapMap.get("hmac"))
+        console.log("hmac computed, ", CryptoJS.enc.Base64.stringify(hmac))
         ctx.throw(403, "Invalid hmac");
     }
 
