@@ -1,6 +1,6 @@
 {
   "action": "segment.users.drain",
-  "partner_config": {
+  "customer_config": {
     "fields": [
       {
         "field_id": "workspace",

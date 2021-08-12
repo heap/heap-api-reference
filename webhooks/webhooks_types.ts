@@ -35,7 +35,7 @@ export interface DrainData {
 export interface BaseWebhookRequest {
     "id_token"?: string;
     "action": string;
-    "partner_config": FieldList;
+    "customer_config": FieldList;
 }
 
 export interface SyncRequest extends BaseWebhookRequest {
