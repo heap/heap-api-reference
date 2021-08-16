@@ -10,8 +10,8 @@ $ npm run start
 
 # Webhooks
 ## Validation
-Webhook callbacks from Heap contain a `Heap-Hash` header that contains information to validate the authenticity of the message.  Your app, when it registers with Heap, will set up a secret key.  This secret key, along with the timestamp of the message, will be used to generate a hash for the message.
-Your app should calculate the hash with your known secret key and the timestamp specified and compare it to the hash specified by Heap.
+Webhook callbacks from Heap contain a `Heap-Hash` header that contains information to validate the authenticity of the message.  Your app, when it registers with Heap, will set up a webhook secret key.  This secret key, along with the timestamp of the message, will be used to generate a hash for the message.
+Your app should calculate the hash with your known webhook secret key and the timestamp specified and compare it to the hash specified by Heap.
 It is recommended that your app also checks that the timestamp is within the threshold of tolerance.
 
 ## Webhook Operations
