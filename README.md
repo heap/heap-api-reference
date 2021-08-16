@@ -23,5 +23,7 @@ This will be a segment ID that should be drained (for cases where the data has g
 ## Testing your endpoint
 This repo also contains a command to generate a curl command you can use to test your users sync and users drain endpoints.  Example usage:
 ```
+export WEBHOOK_SECRET=INSERT_WEBHOOK_SECRET_KEY_HERE
+
 node bin/generateTestHeapHeaders.js  -t "sync" -u "localhost:3000/users_sync"
 ```
