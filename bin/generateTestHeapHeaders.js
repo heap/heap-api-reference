@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const { exec } = require("child_process");
 const syncData = require('./data/sync.json')
 const drainData = require('./data/drain.json')
 const yargs = require('yargs');
@@ -38,6 +39,11 @@ const argv = yargs
             choices: ['now', 'future', 'past'],
             default: 'now',
             description: 'Whether the curl command should use GET or POST.'
+        },
+        print_command: {
+            alias: 'p',
+            description: 'Print the curl command to the console instead of sending request.',
+            boolean: true
         }
     })
     .help()
@@ -74,5 +80,20 @@ const hmac = CryptoJS.enc.Base64.stringify(
         webhookSecret
     )
 );
+const command = `curl -v -H 'Content-Type: application/json' -H 'Heap-Hash: ts:${timeStamp},hmac:${hmac}' -d '${dataBody}' ${argv.url}`
 
-console.log(`curl -v -H 'Content-Type: application/json' -H 'Heap-Hash: ts:${timeStamp},hmac:${hmac}' -d '${dataBody}' ${argv.url}`);
+console.log(command);
+
+if (!argv.print_command) {
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+    });
+}
