@@ -18,14 +18,14 @@ export interface Segment {
     "name": string;
 }
 
-export interface UserEmail {
+export interface UserIdentifier {
     "id": string;
 }
 
 export interface SyncData {
     "segment": Segment;
-    "add": UserEmail[];
-    "remove": UserEmail[];
+    "add": UserIdentifier[];
+    "remove": UserIdentifier[];
 }
 
 export interface DrainData {

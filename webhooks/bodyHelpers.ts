@@ -22,17 +22,17 @@ const getCustomerConfig = (json: any): webhooks.FieldList => {
     return {fields: configFieldList};
 };
 
-const getUserEmails = (list: any[]): webhooks.UserEmail[] => {
-    const userEmailList: webhooks.UserEmail[] = [];
+const getUserIdentifiers = (list: any[]): webhooks.UserIdentifier[] => {
+    const userIdentifierList: webhooks.UserIdentifier[] = [];
     for (const item of list) {
         if (!item.id) {
             throw new TypeError("Users are missing their IDs")
         }
-        userEmailList.push({
+        userIdentifierList.push({
             id: item.id
         })
     }
-    return userEmailList;
+    return userIdentifierList;
 }
 
 const getSegment = (json: any): webhooks.Segment => {
@@ -50,8 +50,8 @@ const getSyncData = (json: any): webhooks.SyncData => {
     }
     return {
         segment: getSegment(json.segment),
-        add: getUserEmails(json.add || []),
-        remove: getUserEmails(json.remove || [])
+        add: getUserIdentifiers(json.add || []),
+        remove: getUserIdentifiers(json.remove || [])
     };
 };
 
