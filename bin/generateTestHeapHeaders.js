@@ -25,9 +25,9 @@ const argv = yargs
             demandOption: true,
             description: 'The URL to use, including port and path.'
         },
-        secret_key: {
+        webhook_secret: {
             alias: 's',
-            description: 'Secret key to use.  If none provided, the SECRET_KEY for this app will be used.'
+            description: 'Secret key to use.  If none provided, the WEBHOOK_SECRET for this app will be used.'
         },
         id_token: {
             alias: 'i',
@@ -50,9 +50,9 @@ if (argv.time_adjust === 'future'){
 } else if (argv.time_adjust === 'past') {
     timeStamp -= TIMESTAMP_DELTA;
 }
-let secretKey = argv.secret_key;
-if (!secretKey) {
-    secretKey = process.env.SECRET_KEY;
+let webhookSecret = argv.webhook_secret;
+if (!webhookSecret) {
+    webhookSecret = process.env.WEBHOOK_SECRET;
 }
 let idToken = argv.id_token;
 if (!idToken) {
@@ -71,7 +71,7 @@ if (argv.type === 'sync') {
 const hmac = CryptoJS.enc.Base64.stringify(
     CryptoJS.HmacSHA256(
         `${timeStamp}${dataBody}`,
-        secretKey
+        webhookSecret
     )
 );
 
