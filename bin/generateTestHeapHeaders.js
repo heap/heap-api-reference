@@ -44,7 +44,7 @@ const argv = yargs
     .argv;
 
 
-let timeStamp = Date.now();
+let timeStamp = +Date.now();
 if (argv.time_adjust === 'future'){
     timeStamp += TIMESTAMP_DELTA;
 } else if (argv.time_adjust === 'past') {

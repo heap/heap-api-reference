@@ -2,9 +2,9 @@
 import * as webhooks from "./webhooks_types";
 import { Context } from "koa";
 
-const getPartnerConfig = (json: any): webhooks.FieldList => {
+const getCustomerConfig = (json: any): webhooks.FieldList => {
     if (!json.fields) {
-        throw new TypeError("Partner config fields were not specified");
+        throw new TypeError("Customer config fields were not specified");
     }
     const list: any[] = json.fields;
     const configFieldList: webhooks.ConfigField[] = [];
@@ -26,7 +26,7 @@ const getUserEmails = (list: any[]): webhooks.UserEmail[] => {
     const userEmailList: webhooks.UserEmail[] = [];
     for (const item of list) {
         if (!item.id) {
-            throw new TypeError("User emails are missing their IDs")
+            throw new TypeError("Users are missing their IDs")
         }
         userEmailList.push({
             id: item.id
@@ -55,15 +55,22 @@ const getSyncData = (json: any): webhooks.SyncData => {
     };
 };
 
+const checkRequiredFieldsExist = (json: any): void => {
+    const requiredFields = ["action", "customer_config", "data"]
+    for (const field of requiredFields) {
+        if (!json[field]) {
+            throw new TypeError(`Drain request is missing required field: ${field}`);
+        }
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
-    if (!json.id_token || !json.action || !json.partner_config || !json.data) {
-        throw new TypeError("Sync request is missing required fields");
-    }
+    checkRequiredFieldsExist(json)
     const syncRequest: webhooks.SyncRequest = {
         id_token: json.id_token,
         action: json.action,
-        partner_config: getPartnerConfig(json.partner_config),
+        customer_config: getCustomerConfig(json.customer_config),
         data: getSyncData(json.data)
     }
     return syncRequest;
@@ -71,14 +78,11 @@ export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
-    if (!json.id_token || !json.action || !json.partner_config || !json.data) {
-        throw new TypeError("Drain request is missing required fields");
-    }
-
+    checkRequiredFieldsExist(json)
     const drainRequest: webhooks.DrainRequest = {
         id_token: json.id_token,
         action: json.action,
-        partner_config: getPartnerConfig(json.partner_config),
+        customer_config: getCustomerConfig(json.customer_config),
         data: { segment: getSegment(json.data.segment) }
     }
     return drainRequest;
