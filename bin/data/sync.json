@@ -17,6 +17,11 @@
       "id": 1338065,
       "name": "Free Customers"
     },
+    "sync_info": {
+      "page_number": 1,
+      "total_pages": 1,
+      "sync_task_id": "FreeCustomersSync"
+    },
     "remove": [
       {
         "id": "user1@email.com"
