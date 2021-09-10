@@ -13,6 +13,12 @@ export interface FieldList {
     "fields": ConfigField[]
 }
 
+export interface SyncInfo {
+    "page_number": number;
+    "total_pages": number;
+    "sync_task_id": string;
+}
+
 export interface Segment {
     "id": number;
     "name": string;
@@ -24,6 +30,7 @@ export interface UserIdentifier {
 
 export interface SyncData {
     "segment": Segment;
+    "sync_info": SyncInfo;
     "add": UserIdentifier[];
     "remove": UserIdentifier[];
 }

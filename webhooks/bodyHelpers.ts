@@ -22,6 +22,12 @@ const getCustomerConfig = (json: any): webhooks.FieldList => {
     return {fields: configFieldList};
 };
 
+const getSyncInfo = (json: any): webhooks.SyncInfo => ({
+    page_number: json.page_number,
+    total_pages: json.total_pages,
+    sync_task_id: json.sync_task_id,
+});
+
 const getUserIdentifiers = (list: any[]): webhooks.UserIdentifier[] => {
     const userIdentifierList: webhooks.UserIdentifier[] = [];
     for (const item of list) {
@@ -50,6 +56,7 @@ const getSyncData = (json: any): webhooks.SyncData => {
     }
     return {
         segment: getSegment(json.segment),
+        sync_info: getSyncInfo(json.sync_info),
         add: getUserIdentifiers(json.add || []),
         remove: getUserIdentifiers(json.remove || [])
     };

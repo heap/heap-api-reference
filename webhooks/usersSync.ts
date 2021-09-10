@@ -34,6 +34,11 @@ export const usersSync = async (ctx: Context, next: () => Promise<any>): Promise
     //         }
     // 2 - Validate the segment ID.  If it does not exist yet, it should be created.
 
+    console.log(
+        `Syncing page ${userRequestData.data.sync_info.page_number} of ${userRequestData.data.sync_info.total_pages} 
+        for sync task ${userRequestData.data.sync_info.sync_task_id}`
+    );
+   
     for (const email of userRequestData.data.add) {
         // process the new emails
         console.log(`Adding email ${email.id} for segment ${userRequestData.data.segment.id}`);
