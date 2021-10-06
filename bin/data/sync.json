@@ -1,5 +1,5 @@
 {
-  "action": "segment.users.sync",
+  "action_type": "segment.users.sync",
   "customer_config": {
     "fields": [
       {

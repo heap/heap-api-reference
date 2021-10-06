@@ -63,7 +63,7 @@ const getSyncData = (json: any): webhooks.SyncData => {
 };
 
 const checkRequiredFieldsExist = (json: any): void => {
-    const requiredFields = ["action", "customer_config", "data"]
+    const requiredFields = ["action_type", "customer_config", "data"]
     for (const field of requiredFields) {
         if (!json[field]) {
             throw new TypeError(`Drain request is missing required field: ${field}`);
@@ -97,9 +97,9 @@ export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
 
 export const getActionTypeFromContext = (ctx: Context): string => {
     const body:any = ctx.request.body;
-    if (!body.action) {
-        ctx.throw(400, "No action was specified");
+    if (!body.action_type) {
+        ctx.throw(400, "No action_type was specified");
     }
 
-    return body.action;
+    return body.action_type;
 }

@@ -1,5 +1,5 @@
 {
-  "action": "segment.users.drain",
+  "action_type": "segment.users.drain",
   "customer_config": {
     "fields": [
       {
