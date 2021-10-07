@@ -68,7 +68,7 @@ if (argv.type === 'sync') {
     dataBody = (JSON.stringify(drainData));
 }
 
-const hmac = CryptoJS.enc.Base64.stringify(
+const hmac = CryptoJS.enc.Hex.stringify(
     CryptoJS.HmacSHA256(
         `${timeStamp}${dataBody}`,
         secretKey
