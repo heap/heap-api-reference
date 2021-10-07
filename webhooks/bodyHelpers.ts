@@ -22,17 +22,23 @@ const getCustomerConfig = (json: any): webhooks.FieldList => {
     return {fields: configFieldList};
 };
 
-const getUserEmails = (list: any[]): webhooks.UserEmail[] => {
-    const userEmailList: webhooks.UserEmail[] = [];
+const getSyncInfo = (json: any): webhooks.SyncInfo => ({
+    page_number: json.page_number,
+    total_pages: json.total_pages,
+    sync_task_id: json.sync_task_id,
+});
+
+const getUserIdentifiers = (list: any[]): webhooks.UserIdentifier[] => {
+    const userIdentifierList: webhooks.UserIdentifier[] = [];
     for (const item of list) {
         if (!item.id) {
             throw new TypeError("Users are missing their IDs")
         }
-        userEmailList.push({
+        userIdentifierList.push({
             id: item.id
         })
     }
-    return userEmailList;
+    return userIdentifierList;
 }
 
 const getSegment = (json: any): webhooks.Segment => {
@@ -50,13 +56,14 @@ const getSyncData = (json: any): webhooks.SyncData => {
     }
     return {
         segment: getSegment(json.segment),
-        add: getUserEmails(json.add || []),
-        remove: getUserEmails(json.remove || [])
+        sync_info: getSyncInfo(json.sync_info),
+        add: getUserIdentifiers(json.add || []),
+        remove: getUserIdentifiers(json.remove || [])
     };
 };
 
 const checkRequiredFieldsExist = (json: any): void => {
-    const requiredFields = ["action", "customer_config", "data"]
+    const requiredFields = ["action_type", "customer_config", "data"]
     for (const field of requiredFields) {
         if (!json[field]) {
             throw new TypeError(`Drain request is missing required field: ${field}`);
@@ -69,7 +76,7 @@ export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
     checkRequiredFieldsExist(json)
     const syncRequest: webhooks.SyncRequest = {
         id_token: json.id_token,
-        action: json.action,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: getSyncData(json.data)
     }
@@ -81,18 +88,18 @@ export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
     checkRequiredFieldsExist(json)
     const drainRequest: webhooks.DrainRequest = {
         id_token: json.id_token,
-        action: json.action,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: { segment: getSegment(json.data.segment) }
     }
     return drainRequest;
 }
 
-export const getActionFromContext = (ctx: Context): string => {
+export const getActionTypeFromContext = (ctx: Context): string => {
     const body:any = ctx.request.body;
-    if (!body.action) {
-        ctx.throw(400, "No action was specified");
+    if (!body.action_type) {
+        ctx.throw(400, "No action_type was specified");
     }
 
-    return body.action;
+    return body.action_type;
 }

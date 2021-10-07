@@ -48,19 +48,16 @@ export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>)
     if (!process.env.WEBHOOK_SECRET) {
         ctx.throw(500, "Webhook Secret Key has not been configured")
     }
-
-    const heapMap: Map<string, any> = extractTimeStampAndHMAC(heapHeader, ctx)
+    const heapMap: Map<string, any> = extractTimeStampAndHMAC(heapHeader, ctx);
     if (!isTimeStampWithinThreshold(heapMap.get(HEAP_TIMESTAMP_KEY))) {
         ctx.throw(400, "Timestamp of \"heap-hash\" is not within threshold")
     }
-
     // The hmac will use the timestamp + data concatenation for the base, and
     // the shared webhook secret key as the key.
     const hmac = CryptoJS.HmacSHA256(
         `${heapMap.get("ts")}${JSON.stringify(ctx.request.body)}`,
         process.env.WEBHOOK_SECRET
     );
-
     const computedHmac = CryptoJS.enc.Base64.stringify(hmac)
     const receivedHmac = heapMap.get("hmac")
     if (computedHmac !== receivedHmac) {

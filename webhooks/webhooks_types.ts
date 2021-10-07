@@ -13,19 +13,26 @@ export interface FieldList {
     "fields": ConfigField[]
 }
 
+export interface SyncInfo {
+    "page_number": number;
+    "total_pages": number;
+    "sync_task_id": string;
+}
+
 export interface Segment {
     "id": number;
     "name": string;
 }
 
-export interface UserEmail {
+export interface UserIdentifier {
     "id": string;
 }
 
 export interface SyncData {
     "segment": Segment;
-    "add": UserEmail[];
-    "remove": UserEmail[];
+    "sync_info": SyncInfo;
+    "add": UserIdentifier[];
+    "remove": UserIdentifier[];
 }
 
 export interface DrainData {
@@ -34,7 +41,7 @@ export interface DrainData {
 
 export interface BaseWebhookRequest {
     "id_token"?: string;
-    "action": string;
+    "action_type": string;
     "customer_config": FieldList;
 }
 

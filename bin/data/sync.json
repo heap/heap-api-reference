@@ -1,5 +1,5 @@
 {
-  "action": "segment.users.sync",
+  "action_type": "segment.users.sync",
   "customer_config": {
     "fields": [
       {
@@ -16,6 +16,11 @@
     "segment": {
       "id": 1338065,
       "name": "Free Customers"
+    },
+    "sync_info": {
+      "page_number": 1,
+      "total_pages": 1,
+      "sync_task_id": "FreeCustomersSync"
     },
     "remove": [
       {
