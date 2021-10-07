@@ -52,7 +52,6 @@ export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>)
     if (!isTimeStampWithinThreshold(heapMap.get(HEAP_TIMESTAMP_KEY))) {
         ctx.throw(400, "Timestamp of \"heap-hash\" is not within threshold")
     }
-    console.log('ctx.request.body:', ctx.request.body);
     // The hmac will use the timestamp + data concatenation for the base, and
     // the shared secret key as the key.
     const hmac = CryptoJS.HmacSHA256(
