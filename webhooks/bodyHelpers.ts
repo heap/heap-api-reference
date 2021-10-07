@@ -76,7 +76,7 @@ export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
     checkRequiredFieldsExist(json)
     const syncRequest: webhooks.SyncRequest = {
         id_token: json.id_token,
-        actionType: json.actionType,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: getSyncData(json.data)
     }
@@ -88,7 +88,7 @@ export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
     checkRequiredFieldsExist(json)
     const drainRequest: webhooks.DrainRequest = {
         id_token: json.id_token,
-        actionType: json.actionType,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: { segment: getSegment(json.data.segment) }
     }
