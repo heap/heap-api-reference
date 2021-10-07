@@ -13,7 +13,7 @@ const app = new Koa();
 const router = new Router();
 
 const healthCheck = async (ctx: Context, next: () => Promise<void>): Promise<void> => {
-  if (ctx.path === '/healthcheck') {
+  if (ctx.path === '/') {
     ctx.status = 200;
   } else {
     await next();
