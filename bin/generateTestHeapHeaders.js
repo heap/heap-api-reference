@@ -68,8 +68,6 @@ if (argv.type === 'sync') {
     dataBody = (JSON.stringify(drainData));
 }
 
-console.log('------crypeo', CryptoJS);
-console.log('------hmac', CryptoJS.HmacSHA256)
 const hmac = CryptoJS.enc.Base64.stringify(
     CryptoJS.HmacSHA256(
         `${timeStamp}${dataBody}`,
