@@ -63,7 +63,7 @@ const getSyncData = (json: any): webhooks.SyncData => {
 };
 
 const checkRequiredFieldsExist = (json: any): void => {
-    const requiredFields = ["action", "customer_config", "data"]
+    const requiredFields = ["action_type", "customer_config", "data"]
     for (const field of requiredFields) {
         if (!json[field]) {
             throw new TypeError(`Drain request is missing required field: ${field}`);
@@ -76,7 +76,7 @@ export const jsonToSyncRequest = (json: any): webhooks.SyncRequest => {
     checkRequiredFieldsExist(json)
     const syncRequest: webhooks.SyncRequest = {
         id_token: json.id_token,
-        action: json.action,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: getSyncData(json.data)
     }
@@ -88,18 +88,18 @@ export const jsonToDrainRequest = (json: any): webhooks.DrainRequest => {
     checkRequiredFieldsExist(json)
     const drainRequest: webhooks.DrainRequest = {
         id_token: json.id_token,
-        action: json.action,
+        action_type: json.action_type,
         customer_config: getCustomerConfig(json.customer_config),
         data: { segment: getSegment(json.data.segment) }
     }
     return drainRequest;
 }
 
-export const getActionFromContext = (ctx: Context): string => {
+export const getActionTypeFromContext = (ctx: Context): string => {
     const body:any = ctx.request.body;
-    if (!body.action) {
-        ctx.throw(400, "No action was specified");
+    if (!body.action_type) {
+        ctx.throw(400, "No action_type was specified");
     }
 
-    return body.action;
+    return body.action_type;
 }

@@ -1,14 +1,14 @@
 import { Context } from "koa";
 import { SyncRequest } from "./webhooks_types";
-import { jsonToSyncRequest, getActionFromContext } from "./bodyHelpers";
+import { jsonToSyncRequest, getActionTypeFromContext } from "./bodyHelpers";
 import { SEGMENT_USERS_SYNC } from "../constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const usersSync = async (ctx: Context, next: () => Promise<any>): Promise<any> => {
     // Validate that this is a request for this endpoint to handle
-    const action:string = getActionFromContext(ctx);
-    if (action != SEGMENT_USERS_SYNC) {
-        ctx.throw(405, `This endpoint does not support specified action: ${action}`);
+    const actionType:string = getActionTypeFromContext(ctx);
+    if (actionType != SEGMENT_USERS_SYNC) {
+        ctx.throw(405, `This endpoint does not support specified actionType: ${actionType}`);
     }
 
     let userRequestData: SyncRequest;
@@ -35,10 +35,10 @@ export const usersSync = async (ctx: Context, next: () => Promise<any>): Promise
     // 2 - Validate the segment ID.  If it does not exist yet, it should be created.
 
     console.log(
-        `Syncing page ${userRequestData.data.sync_info.page_number} of ${userRequestData.data.sync_info.total_pages} 
+        `Syncing page ${userRequestData.data.sync_info.page_number} of ${userRequestData.data.sync_info.total_pages}
         for sync task ${userRequestData.data.sync_info.sync_task_id}`
     );
-   
+
     for (const email of userRequestData.data.add) {
         // process the new emails
         console.log(`Adding email ${email.id} for segment ${userRequestData.data.segment.id}`);
