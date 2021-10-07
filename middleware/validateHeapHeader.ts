@@ -58,8 +58,8 @@ export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>)
         `${heapMap.get("ts")}${JSON.stringify(ctx.request.body)}`,
         process.env.SECRET_KEY
     );
-    const computedHmac = CryptoJS.enc.Hex.stringify(hmac)
-    const receivedHmac = heapMap.get("hmac")
+    const computedHmac = CryptoJS.enc.Hex.stringify(hmac).toLowerCase();
+    const receivedHmac = heapMap.get("hmac").toLowerCase();
     if (computedHmac !== receivedHmac) {
         ctx.throw(403, `Invalid hmac. Recieved: ${receivedHmac}, Computed: ${computedHmac}`);
     }
