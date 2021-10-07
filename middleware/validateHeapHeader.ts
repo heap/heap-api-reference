@@ -40,29 +40,30 @@ const isTimeStampWithinThreshold = (ts: number): boolean => {
 }
 
 export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>): Promise<any> => {
-    const heapHeader = ctx.request.headers["heap-hash"] as string;
-    if (!heapHeader) {
-         ctx.throw(400, "Expected \"heap-hash\" in the header");
-    }
+    if (ctx.path != '/') {
+        const heapHeader = ctx.request.headers["heap-hash"] as string;
+        if (!heapHeader) {
+             ctx.throw(400, "Expected \"heap-hash\" in the header");
+        }
 
-    if (!process.env.SECRET_KEY) {
-        ctx.throw(500, "Secret Key has not been configured")
+        if (!process.env.SECRET_KEY) {
+            ctx.throw(500, "Secret Key has not been configured")
+        }
+        const heapMap: Map<string, any> = extractTimeStampAndHMAC(heapHeader, ctx);
+        if (!isTimeStampWithinThreshold(heapMap.get(HEAP_TIMESTAMP_KEY))) {
+            ctx.throw(400, "Timestamp of \"heap-hash\" is not within threshold")
+        }
+        // The hmac will use the timestamp + data concatenation for the base, and
+        // the shared secret key as the key.
+        const hmac = CryptoJS.HmacSHA256(
+            `${heapMap.get("ts")}${JSON.stringify(ctx.request.body)}`,
+            process.env.SECRET_KEY
+        );
+        const computedHmac = CryptoJS.enc.Base64.stringify(hmac)
+        const receivedHmac = heapMap.get("hmac")
+        if (computedHmac !== receivedHmac) {
+            ctx.throw(403, `Invalid hmac. Recieved: ${receivedHmac}, Computed: ${computedHmac}`);
+        }
     }
-    const heapMap: Map<string, any> = extractTimeStampAndHMAC(heapHeader, ctx);
-    if (!isTimeStampWithinThreshold(heapMap.get(HEAP_TIMESTAMP_KEY))) {
-        ctx.throw(400, "Timestamp of \"heap-hash\" is not within threshold")
-    }
-    // The hmac will use the timestamp + data concatenation for the base, and
-    // the shared secret key as the key.
-    const hmac = CryptoJS.HmacSHA256(
-        `${heapMap.get("ts")}${JSON.stringify(ctx.request.body)}`,
-        process.env.SECRET_KEY
-    );
-    const computedHmac = CryptoJS.enc.Base64.stringify(hmac)
-    const receivedHmac = heapMap.get("hmac")
-    if (computedHmac !== receivedHmac) {
-        ctx.throw(403, `Invalid hmac. Recieved: ${receivedHmac}, Computed: ${computedHmac}`);
-    }
-
     await next();
 }
