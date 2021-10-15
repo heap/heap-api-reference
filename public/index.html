@@ -1,0 +1,26 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Heap Reference App</title>
+    <meta name="description" content="A simple reference app for using heap webhooks.">
+    <meta name="author" content="Heap">
+
+    <meta property="og:title" content="Heap Reference App">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="A simple reference app for using heap webhooks.">
+    <link rel="icon" href="favicon.ico">
+</head>
+
+<body>
+<form action="/api/authorize" method="post">
+    <h1>Super Awesome App</h1>
+    <p>This button below triggers the oauth flow.  The user will be redirected to heap's oauth/authorize endpoint
+    and be asked for their consent to share segment data.  see <code>api/authorization.ts</code> for details</p>
+    <button type="submit" class="btn-link">Authorize</button>
+</form>
+</body>
+</html>
