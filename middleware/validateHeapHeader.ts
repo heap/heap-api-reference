@@ -39,6 +39,9 @@ const isTimeStampWithinThreshold = (ts: number): boolean => {
 };
 
 export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>): Promise<any> => {
+  if (ctx.path !== '/users_sync' && ctx.path !== '/users_drain') {
+    return next()
+  }
   const heapHeader = ctx.request.headers['heap-hash'] as string;
   if (!heapHeader) {
     ctx.throw(400, 'Expected "heap-hash" in the header');
