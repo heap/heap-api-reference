@@ -4,8 +4,9 @@ import { Context } from 'koa';
 const axios = require('axios').default;
 
 // The oauth endpoints provided by heap
-const HEAP_OAUTH_ENDPOINT = 'https://heapanalytics.com/api/partner/oauth/authorize';
-const HEAP_TOKEN_ENDPOINT = 'https://heapanalytics.com/api/partner/oauth/token';
+const HEAP_SERVER = process.env.HEAP_SERVER || 'heapanalytics.com'
+const HEAP_OAUTH_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/authorize`;
+const HEAP_TOKEN_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/token`;
 
 // Information specific to your partner app.
 // If you want to test oauth locally, the following redirect_uri must be registered for your app:
@@ -106,8 +107,8 @@ export const oauthRedirect = async (ctx: Context, next: () => Promise<any>): Pro
       ctx.status = 200;
       ctx.response.body = `
 <h1>id_token = ${id_token}, access_token = [HIDDEN]</h1>
-<p>You've successfully authorized APP to access Heap.  Now go pop on over to heap and select some segments 
-<a href="https://heapanalytics.com/app/definitions?view=segments">select some segments</a> 
+<p>You've successfully authorized APP to access Heap.  Now go pop on over to heap and select some segments
+<a href="https://heapanalytics.com/app/definitions?view=segments">select some segments</a>
 and they should start syncing in a few moments.</p>
 `;
     } else {
