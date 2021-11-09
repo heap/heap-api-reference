@@ -4,7 +4,7 @@ import { Context } from 'koa';
 const axios = require('axios').default;
 
 // The oauth endpoints provided by heap
-const HEAP_SERVER = process.env.HEAP_SERVER || 'heapanalytics.com'
+const HEAP_SERVER = process.env.HEAP_SERVER || 'heapanalytics.com';
 const HEAP_OAUTH_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/authorize`;
 const HEAP_TOKEN_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/token`;
 
@@ -69,9 +69,11 @@ export const oauthRedirect = async (ctx: Context, next: () => Promise<any>): Pro
     ctx.throw(500, query);
   }
   const { code, state } = query;
+  if (!code || !state) {
+    ctx.throw(400, 'expected params were missing');
+  }
   // Partner Actions:
   // - Validate state: Exactly how state is validated will depend on your use case,
-  console.log('state', state);
   /*
    * Now we can use heaps oauth token endpoint to exchange the authorization_code for an access_token and id_token
    *    - access_token    (a token which can be used to call apis on the user's behalf)
@@ -107,17 +109,23 @@ export const oauthRedirect = async (ctx: Context, next: () => Promise<any>): Pro
       ctx.status = 200;
       ctx.response.body = `
 <h1>id_token = ${id_token}, access_token = [HIDDEN]</h1>
-<p>You've successfully authorized APP to access Heap.  Now go pop on over to heap and select some segments
-<a href="https://heapanalytics.com/app/definitions?view=segments">select some segments</a>
+<p>You've successfully authorized APP to access Heap.  Now go pop on over to heap and
+<a href="https://${HEAP_SERVER}/app/definitions?view=segments">select some segments</a> to sync 
 and they should start syncing in a few moments.</p>
 `;
     } else {
-      console.log("Uh-oh! heap's oauth token response did not contain a token. Something is broken", res.data)
+      console.log(
+        "Uh-oh! heap's oauth token response did not contain a token. Something is broken",
+        res.data,
+      );
       if (res.data.error) {
         ctx.throw(500, `error response in the access token endpoint: ${res.data.error}`);
       }
     }
   } catch (e) {
-    ctx.throw(500, `error occurred while getting token: ${e}`);
+    ctx.throw(
+      500,
+      `error occurred while getting token: ${e}:  ${JSON.stringify(e.response?.data)}`,
+    );
   }
 };
