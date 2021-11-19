@@ -12,6 +12,12 @@ $ npm run start
 
 # Webhooks
 
+## Endpoint Specification
+
+See endpoint specification [here](./webhook_spec.yaml)
+
+This is an OpenApi spec, you can copy paste in the [swagger editor](https://editor.swagger.io/) to view.
+
 ## Validation
 
 Webhook callbacks from Heap contain a `Heap-Hash` header that contains information to validate the authenticity of the message. Your app, when it registers with Heap, will set up a webhook secret key. This secret key, along with the timestamp of the message, will be used to generate a hash for the message.
