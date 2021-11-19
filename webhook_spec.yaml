@@ -115,7 +115,7 @@ components:
         data:
           $ref: '#/components/schemas/SegmentDeltaSync'
     CustomerConfig:
-      description: Existing customer config if any (this will be empt)
+      description: Existing customer config if any (this will be empty for now)
       properties:
         fields:
           type: array
