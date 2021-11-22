@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: Data-out API
+  description: This api is for managing and configuring partner apps for building integrations with heap.
+  version: 0.0.1
+tags:
+  - name: Webhooks
+    description: |
+      There is 1 type of webhook a partner can configure (Support for my types will be added in the future):
+
+      1. **segment.users.sync** receives adds and removes for a segment
+    
+      Partners should verify signature header to avoid fake requests. To verify:
+
+      1. Parse the `Heap-Hash` header (comma-separated key:value pairs)
+      2. Check out the timestamp and make sure it’s not too old.
+      3. Concatenate the timestamp with the request body `${ts}${requestbody}`
+      4. Compute the SHA 256 signature using the `webhook_secret_key` assigned to this webhook when it was created.
+      5. compare with the provided value of hmac in the Heap-Hash header.
+
+      Partners should return `200 OK` if sync is successful to avoid unecessary retries.
+paths:
+  /{partner_webhook_sync_url}:
+    post:
+      summary: Specification for segment.users.sync webhook endpoint
+      description: Heap will send a `POST` request to this url when there's a new segment sync
+      tags:
+        - Webhooks
+      parameters:
+        - name: partner_webhook_sync_url
+          in: path
+          description: Registered partner webhook url to receive segments. Must be HTTPS.
+          required: true
+          schema:
+            type: string
+          example: https://partner.com/heap_webhook
+        - $ref: '#/components/parameters/SignatureHeader'
+      requestBody:
+        description: Delta sync payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookSyncRequest'
+            examples:
+              DeltaSyncAdd:
+                summary: Segment sync to add users
+                value:
+                  id_token: '7a36ae58-c4b9-11eb-8529-0242ac130003'
+                  action_type: segment.users.sync
+                  customer_config:
+                    fields:
+                    - field_id: workspace
+                      field_display_name: Workspace
+                      value:
+                        id: workspace_1
+                        display_name: Workspace 1
+                  data:
+                    segment:
+                      id: 1338065
+                      name: Free Customers
+                    sync_info:
+                      page_number: 1
+                      total_pages: 5
+                      sync_task_id: 'afe74af0-496e-11ec-81d3-0242ac130003'
+                    add:
+                      - id: user1@email.com
+                      - id: user2@email.com
+              DeltaSyncRemove:
+                summary: Segment sync to remove users
+                value:
+                  id_token: '7a36ae58-c4b9-11eb-8529-0242ac130003'
+                  action_type: segment.users.sync
+                  customer_config:
+                    fields:
+                      - field_id: workspace
+                        field_display_name: Workspace
+                        value:
+                          id: workspace_1
+                          display_name: Workspace 1
+                  data:
+                    segment:
+                      id: 1338065
+                      name: Free Customers
+                    sync_info:
+                      page_number: 1
+                      total_pages: 5
+                      sync_task_id: 'afe74af0-496e-11ec-81d3-0242ac130003'
+                    remove:
+                      - id: user3@email.com
+                      - id: user4@email.com
+        required: true
+      responses:
+        200:
+          description: OK
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        default:
+          $ref: '#/components/responses/Default' 
+components:
+  schemas:
+    WebhookSyncRequest:
+      properties:
+        id_token:
+          type: string
+          description: The identifier for customer
+          format: uuid
+        action_type:
+          type: string
+          enum: [segment.users.sync]
+          description: Webhook action type
+        customer_config:
+          $ref: '#/components/schemas/CustomerConfig'
+        data:
+          $ref: '#/components/schemas/SegmentDeltaSync'
+    CustomerConfig:
+      description: Existing customer config if any (this will be empty for now)
+      properties:
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field_id:
+                type: string
+                description: ID for customer input
+              field_display_name:
+                type: string
+                description: Field name for customer input
+              field_type:
+                type: string
+                description: Optional field for partners who want customers to choose a user mapping to their system
+                enum: [identity_mapping]
+              value:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID for field value
+                  display_name:
+                    type: string
+                    description: Display name for field value
+    SegmentDeltaSync:
+      properties:
+        segment:
+          $ref: '#/components/schemas/SegmentInfo'
+        sync_info:
+          $ref: '#/components/schemas/SyncInfo'
+        add:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: User identifier customer chose as user mapping
+        remove:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: User identifier chose as user mapping
+    SegmentInfo:
+      properties:
+        id:
+          type: integer
+          description: Segment ID from Heap
+          format: int64
+        name:
+          type: string
+          description: Segment name from Heap
+    SyncInfo:
+      properties:
+        page_number:
+          type: integer
+          description: Page number for current sync
+          format: int64
+        total_pages:
+          type: integer
+          description: Total number of pages for current sync
+          format: int64
+        sync_task_id:
+          type: string
+          description: Unique identifier for current sync
+          format: uuid
+  parameters:
+    SignatureHeader:
+      name: Heap-Hash
+      in: header
+      required: true
+      description: Heap signature for verifying data. Will have a timstamp `ts` and signature `hmac`
+      schema: 
+        type: string
+      example: ts:150000000,hmac:XXXXXXXXX
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Specific error
+          example:
+            error: Invalid signature
+    TooManyRequests:
+      description: Too Many Requests - Will result in a retry
+    Default:
+      description: (4XX/5XX) Unexpected error - Will result in a retry  
+    
