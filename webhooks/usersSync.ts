@@ -19,19 +19,14 @@ export const usersSync = async (ctx: Context, next: () => Promise<any>): Promise
   }
 
   // Partner Actions:
-  // 1 - Validate the id_token which identifies the customer.  If no id_token is provided
-  //     the account / environment the one in which the partner app is registered. Ex:
-  //         let id_token; // Internal identifier for the customer
-  //         if (!userRequestData.id_token) {
-  //             id_token = SELF_ID_TOKEN
-  //         } else {
-  //             // getInternalIdToken will lookup the id_token passed in and return the
-  //             // internal representation of the customer for the partner
-  //             id_token = getInternalIdToken(userRequestData.id_token)
-  //             if (!id_token) {
-  //                 ctx.throw(400, "Invalid id_token");
-  //             }
-  //         }
+  // 1 - Validate the id_token which identifies the customer. 
+  //   // getInternalIdToken will lookup the id_token passed in and return the
+  //   // internal representation of the customer for the partner
+  //   id_token = getInternalIdToken(userRequestData.id_token)
+  //   if (!id_token) {
+  //      ctx.throw(400, "Invalid id_token");
+  //   }
+  //         
   // 2 - Validate the segment ID.  If it does not exist yet, it should be created.
 
   console.log(
