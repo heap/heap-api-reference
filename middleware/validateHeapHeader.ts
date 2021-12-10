@@ -10,6 +10,7 @@ import {
   MAX_FUTURE_TIMESTAMP_DELTA,
 } from '../constants';
 
+// parse the heap-hash header, which has the format `ts:${timestamp},hmac:${hmac}`
 const extractTimeStampAndHMAC = (heapHeader: string, ctx: Context): Map<string, any> => {
   const heapMap: Map<string, any> = new Map();
   try {
@@ -30,6 +31,8 @@ const extractTimeStampAndHMAC = (heapHeader: string, ctx: Context): Map<string, 
   return heapMap;
 };
 
+// validate that the timestamp provided in the header is less than
+// MAX_OLD_TIMESTAMP_DELTA (1 minute) old
 const isTimeStampWithinThreshold = (ts: number): boolean => {
   const now = +Date.now();
   if (now - ts > MAX_OLD_TIMESTAMP_DELTA) {
@@ -38,6 +41,8 @@ const isTimeStampWithinThreshold = (ts: number): boolean => {
   return ts - now < MAX_FUTURE_TIMESTAMP_DELTA;
 };
 
+// Compute the hmac using your WEBHOOK_SECRET and the timestamp concatenated with the request body,
+// then verify that it matches the provided hmac
 export const validateHeapHeader = async (ctx: Context, next: () => Promise<any>): Promise<any> => {
   if (ctx.path !== '/users_sync' && ctx.path !== '/users_drain') {
     return next()
