@@ -1,4 +1,5 @@
 {
+  "id_token": "CustomerIdToken",
   "action_type": "segment.users.sync",
   "customer_config": {
     "fields": [
