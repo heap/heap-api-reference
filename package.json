@@ -18,7 +18,7 @@
   "dependencies": {
     "@types/crypto-js": "4.0.1",
     "@types/koa-bodyparser": "4.3.1",
-    "axios": "0.23.0",
+    "axios": "0.25.0",
     "commonjs": "0.0.1",
     "crypto-js": "4.0.0",
     "dotenv": "10.0.0",
