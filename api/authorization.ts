@@ -7,6 +7,7 @@ const axios = require('axios').default;
 const HEAP_SERVER = process.env.HEAP_SERVER || 'heapanalytics.com';
 const HEAP_OAUTH_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/authorize`;
 const HEAP_TOKEN_ENDPOINT = `https://${HEAP_SERVER}/api/partner/oauth/token`;
+const HEAP_METADATA_ENDPOINT = `https://${HEAP_SERVER}/api/partner/v1/metadata`;
 
 // Information specific to your partner app.
 // If you want to test oauth locally, the following redirect_uri must be registered for your app:
@@ -106,12 +107,23 @@ export const oauthRedirect = async (ctx: Context, next: () => Promise<any>): Pro
     // 4) Tell the user to go sync some segments
     const { id_token, access_token, token_type } = res.data;
     if (id_token && access_token && token_type === 'bearer') {
+
+      // Optionally get some metadata about the connected environment
+      const metadata = await axios.get(`${HEAP_METADATA_ENDPOINT}/${id_token}`, {
+        headers: {
+          authorization: `Bearer ${access_token}`,
+        },
+      });
+
       ctx.status = 200;
       ctx.response.body = `
 <h1>id_token = ${id_token}, access_token = [HIDDEN]</h1>
 <p>You've successfully authorized APP to access Heap.  Now go pop on over to heap and
 <a href="https://${HEAP_SERVER}/app/definitions?view=segments">select some segments</a> to sync 
 and they should start syncing in a few moments.</p>
+<p> Connected account info:
+<pre>${JSON.stringify(metadata.data, null, 2)}</pre> 
+</p>
 `;
     } else {
       console.log(
