@@ -1,6 +1,6 @@
-# Heap Partner API Example
+# Heap Segment Sync API Example
 
-This project contains a basic webapp which interacts with the new Heap Partner API. The current implementation contains example endpoints for authorization, and processing webhook callbacks to process segment data from Heap. 
+This project contains a basic webapp which interacts with the new Heap Segment Sync API. The current implementation contains example endpoints for authorization, and processing webhook callbacks to process segment data from Heap. 
 
 You can run this webserver with the following commands:
 
