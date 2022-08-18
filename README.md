@@ -1,6 +1,6 @@
 # Heap Segment Sync API Example
 
-This project contains a basic webapp which interacts with the new Heap Segment Sync API. The current implementation contains example endpoints for authorization, and processing webhook callbacks to process segment data from Heap. 
+This project contains a basic webapp which interacts with the new Heap Segment Sync API. The current implementation contains example endpoints for authorization, and processing webhook callbacks to process segment data from Heap.
 
 You can run this webserver with the following commands:
 
@@ -49,21 +49,18 @@ An example implementation of can be found in [middleware/validateHeapHeader.ts](
 
 This will be a list of users to add into a certain segment. See [bin/data/sync.json](./bin/data/sync.json) for an example payload.
 
-### Users Drain
-
-This will be a segment ID that should be drained (for cases where the data has gotten out of sync).  See [bin/data/drain.json](./bin/data/drain.json) for an example payload.
-
 ## Testing your integration
 
 There are three ways to test your integration, and we recommend completing all of them before enabling the integration for a customer:
 
 1. Local testing: Use the test command in this reference app to test user syncs locally. Example:
+
    ```bash
     export WEBHOOK_SECRET=INSERT_WEBHOOK_SECRET_KEY_HERE
-    
+
     node bin/generateTestHeapHeaders.js  -t "sync" -u "localhost:3000/users_sync"
    ```
+
 2. Use the “sample segment test” in the Heap UI Developers Hub to quickly check if your webhook is properly receiving requests from Heap.
    When you click “Send sample segment”, Heap will fire a request with dummy users to your webhook.
 3. Production testing: Install the Heap snippet from your test environment on a test site to collect some data. Then, create a test segment in Heap (Definitions > Click “New Definition” > Click “New Segment”) and toggle on a sync to your test integration.
-
