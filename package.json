@@ -17,7 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/crypto-js": "4.0.1",
-    "@types/koa-bodyparser": "4.3.1",
+    "@types/koa-bodyparser": "4.3.13",
     "axios": "0.25.0",
     "commonjs": "0.0.1",
     "crypto-js": "4.0.0",
